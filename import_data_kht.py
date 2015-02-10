@@ -3,6 +3,12 @@ import pandas as pd
 import numpy as np
 import os
 
+###IMPORTANT!!!! DATA FILES (ex File1.txt) need to be in last folder mentioned in the main_dir pathway on code line 13!!!#####
+### IMPORTANT!!! there is also a new_dir pathway on code line 72 this must be changed for the merging to work
+### IMPOTANT!!! there is a "need" variable on line 73, this must be csv file of the ids, WE CREATED THIS FILE AND SAVED AS CSV
+### THE CSV FILE IS ALSO IN OUR REPO named "IDS.csv"
+
+
 main_dir = "C:\Users\Kyle\Documents\NSOE_semester_4\Big_Data\Data_Files\CER_Electricity_Revised_March_2012\DATA/"
 #file1 = "\File1.txt"
 #file2 = "\File2.txt"
@@ -63,7 +69,7 @@ dftotal[dftotal.days == 298] #in data
 
 #import merge data
 new_dir = "C:\Users\Kyle\Documents\NSOE_semester_4\Big_Data\A1/"
-need = "IDS.csv"
+need = "SME and Residential allocations"
 ids = pd.read_csv(new_dir + need)
 id2 = ids[ids.Code == 3]
 id3 = ids.drop(id2.index)
