@@ -10,9 +10,9 @@ main_dir = "C:\Users\Kyle\Documents\NSOE_semester_4\Big_Data\Data_Files\CER_Elec
 #file4 = "\File4.txt"
 #file5 = "\File5.txt"
 #file6 = "\File6.txt"
-#missing = [".", "NA", "NULL", "-", "999999999"]
+missing = [".", "NA", "NULL", "-", "999999999"]
 
-#import data one file at a time for the lulz
+#import data one file at a time
 #df1 = pd.read_table(main_dir + file1, names = ['panid', 'date', 'kwh'], sep = " ", na_values = missing, skiprows = 6000000, nrows = 1500000)
 #df2 = pd.read_table(main_dir + file2, names = ['panid', 'date', 'kwh'], sep = " ", na_values = missing, skiprows = 6000000, nrows = 1500000)
 #df3 = pd.read_table(main_dir + file3, names = ['panid', 'date', 'kwh'], sep = " ", na_values = missing, skiprows = 6000000, nrows = 1500000)
@@ -32,11 +32,11 @@ hours = dftotal['date'] % 100
 days = dftotal['date'] // 100
 dftotal['days'] = days
 dftotal['hours'] = hours
-del dftotal.date
+#del dftotal.date
 
 #drop pure duplicates
 dftotal = dftotal.drop_duplicates()
-dftotal
+
 
 #looking for duplicated
 dupid = dftotal.panid.duplicated() #not useful, IDs are going to be repeated
@@ -55,3 +55,22 @@ dftotal[nanpanid]
 
 nandate = dftotal.date.isnull()
 dftotal[nandate]
+
+#Day light savings
+dftotal[dftotal.days == 452] #not in data
+dftotal[dftotal.days == 669] #not in data
+dftotal[dftotal.days == 298] #in data
+
+#import merge data
+new_dir = "C:\Users\Kyle\Documents\NSOE_semester_4\Big_Data\A1/"
+need = "IDS.csv"
+ids = pd.read_csv(new_dir + need)
+id2 = ids[ids.Code == 3]
+id3 = ids.drop(id2.index)
+id3.columns = ['panid', 'code', 'tariff', 'stim', 'SME']
+df_final = pd.merge(dftotal, id3, how = 'outer')
+fourtynine = df_final[df_final.hours == 49]
+df_final2 = df_final.drop(fourtynine.index)
+fifty = df_final2[df_final2.hours == 50]
+df_final3 = df_final2.drop(fifty.index)
+df_final3
