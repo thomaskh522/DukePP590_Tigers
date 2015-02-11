@@ -4,14 +4,14 @@ import numpy as np
 import os
 import xlrd #MISSION CRITICAL
 
-###IMPORTANT! DATA FILES (ex File1.txt) need to be in last folder mentioned in the main_dir pathway on code line 16
-###IMPORTANT! This can be run with a CSV of the ID excel sheet, line codes 18, 84-93 need to be activated
-### THE CSV FILE IS ALSO IN OUR REPO named "IDS.csv"
-### The default is to just use the excel file (code starts at line 16 and then again at line 95)
+###DATA FILES (ex File1.txt) need to be in last folder mentioned in the main_dir pathway on code line 16
 ### PLEASE NOTE THAT READING EXCEL FILE REQUIRES XLRD, WHICH MAY NOT BE A CANOPY DEFAULT, USE PACKAGE MANAGER
+###This can be run with a CSV of the ID excel sheet, line codes 18, 84-93 need to be activated
+### THE CSV FILE IS ALSO IN OUR REPO named "IDS.csv"
+### The default is to use the excel file (code starts at line 16 and then again at line 95)
 
-### the final DataFrames are df_csv (made using csv file) and df_excel (made using excel file, which is default)
-###If compiling both at CSV and excel at the same time it can take a while
+### The final DataFrames are df_csv (made using csv file) and df_excel (made using excel file, which is default)
+
 
 main_dir = "C:\Users\Kyle\Documents\NSOE_semester_4\Big_Data\Data_Files\CER_Electricity_Revised_March_2012\DATA/"
 excel_file = "SME and Residential allocations.xlsx"
@@ -52,7 +52,7 @@ dftotal['hours'] = hours
 dftotal = dftotal.drop_duplicates()
 #looking for duplicated (mostly unhelpful)
 dupid = dftotal.panid.duplicated() #not useful, IDs are going to be repeated
-dupdate = dftotal.date.duplicated() #dates are duplicated... need to address this... nope
+dupdate = dftotal.date.duplicated() #dates are duplicated as expected
 dupkwh = dftotal.kwh.duplicated() #not really useful... kwh could be repeated
 
 #looking at duplicated dates----------------------------------
@@ -77,7 +77,7 @@ dftotal[dftotal.days == 669] #not in data
 dftotal[dftotal.days == 298] #in data
 
 ###IMPORTING AND MERGING ID DATA###---------------------------------------------
-#CAN USE CSV METHOD OR EXCEL METHOD, DEFAULT RUNS BOTH
+#CAN USE CSV METHOD OR EXCEL METHOD, DEFAULT RUNS EXCEL
 
 
 #CSV METHOD-------------------------------------------------
