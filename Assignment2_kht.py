@@ -64,17 +64,17 @@ t, p = ttest_ind(trt, crtl, equal_var = False)
 
 ### Time Series
 # DAILY AGGREGATION --------------------
-grp = df.groupby(['date', 'panid', 'tariff']) #was date
+grp = df.groupby(['month', 'year', 'panid', 'tariff']) #was date
 agg = grp['kwh'].sum()
 
 
 # reset the index (multilevel at the moment)
 agg = agg.reset_index() # drop the multi-index
-grp = agg.groupby(['date', 'tariff'])#was date
+grp = agg.groupby(['month', 'year', 'tariff'])#was date
 
 ## split up treatment/control
-trt = {k[0]: agg.kwh[v].values for k, v in grp.groups.iteritems() if k[2] == 'A'} # get set of all treatments by date
-ctrl = {k[0]: agg.kwh[v].values for k, v in grp.groups.iteritems() if k[2] == 'E'} # get set of all controls by date 
+trt = {k[0]: agg.kwh[v].values for k, v in grp.groups.iteritems() if k[2] == 'A'} # get set of all treatments by date (1 by day, 2 by month)
+ctrl = {k[0]: agg.kwh[v].values for k, v in grp.groups.iteritems() if k[2] == 'E'} # get set of all controls by date (1 by day 2 by month)
 keys = ctrl.keys()
 
 
@@ -93,12 +93,10 @@ fig1 = plt.figure()
 p1 = fig1.add_subplot(2,1,1)
 p1.plot(t_p['tstat']) 
 p1.axhline(2, color = 'r', linestyle = '--')
-p1.axvline(171, color = 'g', linestyle = '--')
 plt.show()
 p1.set_title("Daily T Stats")
 
 p2 = fig1.add_subplot(2,1,2)
 p2.plot(t_p['pval']) 
 p2.axhline(.05, color = 'r', linestyle = '--')
-p2.axvline(171, color = 'g', linestyle = '--')
 p2.set_title("Daily P Values")
