@@ -1,0 +1,104 @@
+from __future__ import division
+from pandas import Series, DataFrame
+import pandas as pd
+import numpy as np
+import pytz
+from datetime import datetime, timedelta
+import os
+import statsmodels.api as sm
+
+
+""" download the updated data from drop box, this will prevent the need to 
+pasre dates. I HAVE NOT ADJUSTED THIS FOR THE NEW DATA THAT DAN HAS COMITTED,
+MAY NEED ADJUSTING"""
+
+main_dir = "C:\Users\Kyle\Documents\Big_Data\Practice"
+allo = "/allocation_subsamp.csv"
+redux = "/kwh_redux_pretrail.csv" 
+#put in 2 before period to avoid parsing
+
+np.random.seed(seed=1789)
+
+##import data
+
+df1 = pd.read_csv(main_dir + allo)
+df2 = pd.read_csv(main_dir + redux)
+
+control = df1[df1['tariff'] == 'E']
+crtl = control.ID
+
+#sad ugly way of doing this, may be wrong, need to double check#
+#ids = df1['ID']
+#tar = [v for v in pd.unique(df1['tariff']) if v != 'E']
+#stim = [v for v in pd.unique(df1['stimulus']) if v !='E']
+
+
+TA = df1[df1['tariff'] == 'A']
+T1 = df1[df1['stimulus'] == '1']
+TA1 = pd.merge(TA, T1)
+TA1ID = TA1.ID
+T3 = df1[df1['stimulus'] == '3']
+TA3 = pd.merge(TA, T3)
+TA3ID = TA3.ID
+TB = df1[df1['tariff'] == 'B']
+TB1 = pd.merge(TB, T1)
+TB1ID = TB1.ID
+TB3 = pd.merge(TB, T3)
+TB3ID = TB3.ID
+
+### sampling ###
+crtl_samp = np.random.choice(crtl, size = 300, replace = False)
+A1_samp = np.random.choice(TA1ID, size = 150, replace = False)
+A3_samp = np.random.choice(TA3ID, size = 150, replace = False)
+B1_samp = np.random.choice(TB1ID, size = 50, replace = False)
+B3_samp = np.random.choice(TB3ID, size = 50, replace = False)
+
+###create dataframe with all the sampled IDS### --------
+
+#seperate IDS
+d = {'control': crtl_samp, 'A1' : A1_samp, 'A3': A3_samp, 'B1': B1_samp, 'B3': B3_samp}
+df = DataFrame(dict([(k,Series(v)) for k,v in d.iteritems()]))
+
+#set with concat
+crtl_samp = DataFrame(np.random.choice(crtl, size = 300, replace = False))
+crtl_samp['TRT'] = 'control'
+A1_samp = DataFrame(np.random.choice(TA1ID, size = 150, replace = False))
+A1_samp['TRT'] = 'A1'
+A3_samp = DataFrame(np.random.choice(TA3ID, size = 150, replace = False))
+A3_samp['TRT'] = 'A3'
+B1_samp = DataFrame(np.random.choice(TB1ID, size = 50, replace = False))
+B1_samp['TRT'] = 'B1'
+B3_samp = DataFrame(np.random.choice(TB3ID, size = 50, replace = False))
+B3_samp['TRT'] = 'B3'
+
+df_concat = pd.concat([crtl_samp, A1_samp, A3_samp, B1_samp, B3_samp],).reset_index(drop=True)
+df_concat.columns = ['ID', 'TRT']
+
+#import consumption data
+consump = pd.read_csv(main_dir + redux, parse_dates = [2])
+
+#merge consumption data with sample IDs
+
+df_total = pd.merge(df_concat, consump, on = 'ID')
+df_total['month'] = df_total['date'].apply(lambda x: x.month)
+
+#group by month
+
+grp = pd.groupby(df_total, by = ['ID','TRT','month'])
+grp_kwh = DataFrame(grp.kwh.sum()).reset_index()
+grp_kwh['kwh_month'] = 'kwh_' + grp_kwh['month'].apply(str)
+
+#pivot data
+
+df_piv = grp_kwh.pivot('ID', 'kwh_month', 'kwh')
+df_piv.reset_index(inplace = True)
+df_piv.columns.name = None
+
+#merge with treatment info
+df_final = pd.merge(df_piv, df_concat, on = "ID")
+
+#LOGIT MODEL
+
+
+
+
