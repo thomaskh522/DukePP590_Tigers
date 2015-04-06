@@ -60,38 +60,29 @@ df_total = pd.merge(agg2_piv, df)
 
 #Number 10-Logit Model
 
-df_logit = pd.get_dummies(df_total, columns = ['tariff', 'stimulus'])
+df_logit = pd.get_dummies(df_total, columns = ['tarstim'])
 
-##Set up Data for Logit
 kwh_cols = [v for v in df_logit.columns.values if v.startswith('kwh')]
 
-##Gets cols that you want to include in the regression
-#Probably don't need next lines
-ctrl_cols = ['tariff_E'] + ['stimulus_E']
-A1_cols = ['tariff_A'] + ['stimulus_1']
-A3_cols = ['tariff_A'] + ['stimulus_3']
-B1_cols = ['tariff_B'] + ['stimulus_1']
-B3_cols = ['tariff_B'] + ['stimulus_3']
-
-logit1 = ['tariff_E'] + ['stimulus_E'] + ['tariff_A'] + ['stimulus_1']
-logit2 = ['tariff_E'] + ['stimulus_E'] + ['tariff_A'] + ['stimulus_3']
-logit3 = ['tariff_E'] + ['stimulus_E'] + ['tariff_B'] + ['stimulus_1']
-logit4 = ['tariff_E'] + ['stimulus_E'] + ['tariff_B'] + ['stimulus_3']
+A1_cols = ['tarstim_A1'] + kwh_cols
+A3_cols = ['tarstim_A3'] + kwh_cols
+B1_cols = ['tarstim_B1'] + kwh_cols
+B3_cols = ['tarstim_B3'] + kwh_cols
 
 ##Set up Y, X
 #y is treatment or control
-y = df_logit[kwh_cols]
+y = df_logit['tarstim_EE']
 # X is the variables that we want to use as Betas and adds constant
-X1 = df_logit[logit1]
+X1 = df_logit[A1_cols]
 X1 = sm.add_constant(X1)
 
-X2 = df_logit[logit2]
+X2 = df_logit[A3_cols]
 X2 = sm.add_constant(X2)
 
-X3 = df_logit[logit3]
+X3 = df_logit[B1_cols]
 X3 = sm.add_constant(X3)
 
-X4 = df_logit[logit4]
+X4 = df_logit[B3_cols]
 X4 = sm.add_constant(X4)
 
 ##logit--Logit is used to determine the relationships between the variables prior to running regression
