@@ -70,7 +70,7 @@ tarstims = ['tarstim_A1', 'tarstim_A3', 'tarstim_B1', 'tarstim_B3', 'tarstim_EE'
 
 A1_cols = ['tarstim_A1'] + kwh_cols
 A3_cols = ['tarstim_A3'] + kwh_cols
-B1_cols = ['tarstim_B1'] + kwh_colsy
+B1_cols = ['tarstim_B1'] + kwh_cols
 
 B3_cols = ['tarstim_B3'] + kwh_cols
 
