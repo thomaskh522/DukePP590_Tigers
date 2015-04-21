@@ -17,6 +17,9 @@ from fe_functions import *
 df = pd.read_csv(root + 'task_4_kwh_w_dummies_wide.csv')
 df = df.dropna(axis=0, how='any')
 
+########################################################################
+#Section 1
+########################################################################
 # GET TARIFFS ------------
 tariffs = [v for v in pd.unique(df['tariff']) if v != 'E']
 stimuli = [v for v in pd.unique(df['stimulus']) if v != 'E']
@@ -67,10 +70,6 @@ df2 = pd.merge(df1,df_logit)
 
 ##creating necessary variables
 
-#trial = [v for v in df.columns if v.startswith("kwh_2010")]
-#pretrial = [v for v in df.columns if v.startswith("kwh_2009")]
-#df2['trial'] = 
-
 #log of consumption
 df2['log_kwh'] = (df2['kwh'] + 1).apply(np.log)
 
@@ -78,9 +77,8 @@ df2['log_kwh'] = (df2['kwh'] + 1).apply(np.log)
 df2['mo_str'] = np.array(["0" + str(v) if v < 10 else str(v) for v in df2['month']])
 df2['ym'] = df2['year'].apply(str) + "_" + df2['mo_str']
 
-#trial/pre-trial indicator
-p = (df2['ym'] !='2009_08') & (df2['ym'] !='2009_09')&(df2['ym'] !='2009_10') &(df2['ym'] !='2009_11')&(df2['ym'] !='2009_12') 
-df2['p'] = 0 + p 
+#trial/pre-trial indicator and interaction var
+df2['p'] = 0 + (df2['year'] > 2009)
 df2['TP'] = df2['trt'] * df2['p']
 
 ##setting up regression variables
@@ -115,7 +113,4 @@ X = DataFrame(X, columns = nms)
 fe_w_model = sm.OLS(y, X)
 fe_w_results = fe_w_model.fit()
 print(fe_w_results.summary())
-
-
-
 
