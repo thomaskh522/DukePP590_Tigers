@@ -9,7 +9,7 @@ main_dir = "C:\Users\Matt\Documents\Nicholas School-2nd Year\Spring 2015\Big Dat
 root = main_dir + "\Python\Data\\"
 
 ######################################################################
-#Section 0
+# Section 0
 ######################################################################
 
 # CHANGE WORKING DIRECTORY (wd)
