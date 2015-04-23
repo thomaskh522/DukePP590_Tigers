@@ -187,12 +187,12 @@ def do_logit(df, tar, stim, D = None):
 #                           SECTION 2                               #
 #####################################################################
 
-main_dir = "/Users/amitpalsingh/Documents/Duke Academics/Spring 2015/PubPol 590 Big Data/00 Data/"
-root = main_dir + "data_all/"
+# main_dir = "/Users/dnoriega/Dropbox/pubpol590_sp15/data_sets/CER/tasks/3_task_data/"
+root = "/Users/dnoriega/Dropbox/pubpol590_sp15/data_sets/CER/tasks/3_task_data/"
 
 nas = ['', ' ', 'NA'] # set NA values so that we dont end up with numbers and text
-srvy = pd.read_csv(root + '09_Smart meters Residential pre-trial survey data.csv', na_values = nas)
-df = pd.read_csv(root + '09_data_section2.csv')
+srvy = pd.read_csv(root + 'Smart meters Residential pre-trial survey data.csv', na_values = nas)
+df = pd.read_csv(root + 'data_section2.csv')
 
 # list of questions
 qs = ques_list(srvy)

@@ -7,14 +7,14 @@ import pandas as pd
 import numpy as np
 import os
 import xlrd
-import pytz 
+import pytz
 import time
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 
-main_dir = "C:\Users\Kyle\Documents\Big_Data\Practice"
+main_dir = "/Users/dnoriega/Dropbox/pubpol590_sp15/data_sets/CER/tasks/3_task_data"
 allo = "/allocation_subsamp.csv"
-redux = "/kwh_redux_pretrail2.csv" 
+redux = "/kwh_redux_pretrial.csv"
 #put in 2 before period to avoid parsing
 
 df = pd.read_csv(main_dir + allo, header = 0)
@@ -46,7 +46,7 @@ consump = pd.read_csv(main_dir + redux)
 #Number 6-Merging with ids dataframe of samples
 df2 = pd.merge(ids2, consump)
 #Number 7-aggregate monthly consumption
-grp_month = df2.groupby(['year', 'month', 'ID']) 
+grp_month = df2.groupby(['year', 'month', 'ID'])
 agg2 = grp_month['kwh'].sum()
 agg2 = agg2.reset_index()
 #Number 8-Add 'kwh_month' column and pivot
@@ -78,31 +78,37 @@ B3_cols = ['tarstim_B3'] + kwh_cols
 #y is treatment or control
 y = df_dum['tarstim_EE']
 
+
+"""MAJOR FIXES REQUIRED. RESULTS DID NOT WORK OUT OF THE BOX. DATASTRUCTURES INCORRECT."""
 # X is the variables that we want to use as Betas and adds constant
-X1 = df_dum[A1_cols]
+X1 = df_dum[A1_cols].ix[(df_dum.tarstim_A1==1) | (df_dum.tarstim_EE==1), 1:]
 X1 = sm.add_constant(X1)
 
-X2 = df_dum[A3_cols]
+X2 = df_dum[A3_cols].ix[(df_dum.tarstim_A3==1) | (df_dum.tarstim_EE==1), 1:]
 X2 = sm.add_constant(X2)
 
-X3 = df_dum[B1_cols]
+X3 = df_dum[B1_cols].ix[(df_dum.tarstim_B1==1) | (df_dum.tarstim_EE==1), 1:]
 X3 = sm.add_constant(X3)
 
-X4 = df_dum[B3_cols]
+X4 = df_dum[B3_cols].ix[(df_dum.tarstim_B3==1) | (df_dum.tarstim_EE==1), 1:]
 X4 = sm.add_constant(X4)
 
+"""It is not sufficient to just tag values. The data in the model should ONLY include the rows
+of data relevant to what is being modeled. Furthermore, you should not include on the right
+hand side any variables that label something as "treatment" when the left hand side is a value for
+"control". This leads to perfect prediction/singularity."""
 
-logit_model1 = sm.Logit(y, X1)
-logit_results1 = logit_model1.fit() 
+logit_model1 = sm.Logit(y[(df_dum.tarstim_A1==1) | (df_dum.tarstim_EE==1)], X1)
+logit_results1 = logit_model1.fit()
 
-logit_model2 = sm.Logit(y, X2)
+logit_model2 = sm.Logit(y[(df_dum.tarstim_A3==1) | (df_dum.tarstim_EE==1)], X2)
 logit_results2 = logit_model2.fit()
 
-logit_model3 = sm.Logit(y, X3)
-logit_results3 = logit_model3.fit()  
+logit_model3 = sm.Logit(y[(df_dum.tarstim_B1==1) | (df_dum.tarstim_EE==1)], X3)
+logit_results3 = logit_model3.fit()
 
-logit_model4 = sm.Logit(y, X4)
-logit_results4 = logit_model4.fit() 
+logit_model4 = sm.Logit(y[(df_dum.tarstim_B3==1) | (df_dum.tarstim_EE==1)], X4)
+logit_results4 = logit_model4.fit()
 
 print(logit_results1.summary())
 print(logit_results2.summary())
