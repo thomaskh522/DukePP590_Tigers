@@ -12,10 +12,10 @@ import time
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 
-main_dir = "/Users/dnoriega/Dropbox/pubpol590_sp15/data_sets/CER/tasks/3_task_data"
-allo = "/allocation_subsamp.csv"
-redux = "/kwh_redux_pretrial.csv"
-#put in 2 before period to avoid parsing
+
+main_dir = "/Users/amitpalsingh/Documents/Duke Academics/Spring 2015/PubPol 590 Big Data/00 Data/"
+allo = "data_all/09_allocation_subsamp.csv"
+redux = "data_all/09_kwh_redux_pretrial.csv"
 
 df = pd.read_csv(main_dir + allo, header = 0)
 
